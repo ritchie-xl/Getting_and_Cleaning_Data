@@ -20,7 +20,12 @@ test_data = read.table("X_test.txt",header = F)
 test_label = read.table("y_test.txt",header = F)
 test_user = read.table("subject_test.txt",header = F)
 test = cbind(test_user,test_data,test_label)
+dim(test)
 
 setwd(wd)
 data = rbind(train,test)
 dim(data)
+
+header = read.table("features.txt",header = F)
+selected = header[grepl("mean",header$V2) | grepl("std",header$V2),][,1]
+
