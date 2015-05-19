@@ -4,18 +4,19 @@
 library(plyr)
 library(data.table)
 
+# load all the data from raw file
 old = getwd()
 setwd("C:/Users/Lei/scripts/Getting_and_Cleaning_Data")
 wd = "data"
 train_wd = "data/train"
 test_wd = "test"
 getwd()
-
 setwd(train_wd)
 
 train_data = read.table("X_train.txt",header = F)
 train_label = read.table("y_train.txt",header = F)
 train_user = read.table("subject_train.txt",header=F)
+#Join train data with train data activity label
 train = cbind(train_data,train_label)
 dim(train)
 
@@ -24,13 +25,16 @@ setwd(test_wd)
 test_data = read.table("X_test.txt",header = F)
 test_label = read.table("y_test.txt",header = F)
 test_user = read.table("subject_test.txt",header = F)
+#Join test data with test data activity label
 test = cbind(test_data,test_label)
 dim(test)
 
+#Combine all the testing and training data
 setwd(old)
 data = rbind(train,test)
 dim(data)
 
+# Get the column names for the combined data
 setwd(wd)
 header = read.table("features.txt",header = F)
 colnames = c(strsplit(paste(header[,2],collapse='\t'),'\t'))
@@ -45,11 +49,13 @@ dir()
 act = data.table(read.table("activity_labels.txt",header = F))
 act = data.table(activity)
 setnames(act,c("activity","activityDesc"))
+
+# Join the activity description to its label
 setkey(extracted_data,activity)
 setkey(act,activity)
-
 data_step4 = merge(extracted_data,act,all=T)
 dim(data_step4)
+#remove the activity column and keep the description column
 data_step4$activity=NULL
 
 
