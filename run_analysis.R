@@ -8,7 +8,7 @@ old = getwd()
 setwd("C:/Users/Lei/scripts/Getting_and_Cleaning_Data")
 wd = "data"
 train_wd = "data/train"
-test_wd = "data/test"
+test_wd = "test"
 getwd()
 
 setwd(train_wd)
@@ -33,16 +33,23 @@ dim(data)
 
 setwd(wd)
 header = read.table("features.txt",header = F)
-dim(header)
-a = c(strsplit(paste(header[,2],collapse='\t'),'\t'))
+colnames = c(strsplit(paste(header[,2],collapse='\t'),'\t'))
 
-row = c(grep("-mean",header[,2]),grep("-std",header[,2]))
-rows = sort(row)
+cols = c(grep("-mean",header[,2]),grep("-std",header[,2]))
+cols = sort(cols)
+names(data) = c(colnames[[1]],"activity")
+extracted_data = data.table(data[,c(rows,dim(test)[2])],key="activity")
+dim(extracted_data)
 
-c(a[[1]][rows])
+dir()
+act = data.table(read.table("activity_labels.txt",header = F))
+act = data.table(activity)
+setnames(act,c("activity","activityDesc"))
+setkey(extracted_data,activity)
+setkey(act,activity)
 
-setnames(test[,rows],c(a[[1]][rows]))
-test[,rows]
-colnames(test[,rows]) = c(a[[1]][rows])
-colnames(test[,rows])
+data_step4 = merge(extracted_data,act,all=T)
+dim(data_step4)
+data_step4$activity=NULL
+
 
