@@ -1,7 +1,7 @@
 ## This is the script for the course project of Getting and Cleaning
 # data on Coursera
 
-library(plyr)
+library(dplyr)
 library(data.table)
 
 # load all the data from raw file
@@ -45,13 +45,12 @@ data_step4 = merge(extracted_data,act,all=T)
 
 #remove the activity column and keep the description column
 data_step4$activity=NULL
+data_step4
 
-data_step5 = group_by(data_step4,user,activityDesc)
-old_names = names(data_step5)
-names(data_step5)
-a = summarise(data_step5,mean(tBodyAccmeanY))
-b = summarise(data_step5,mean(tBodyAccmeanX))
-cbind(data.frame(a),data.frame(b)[,3])
+head(data_step4)
+data_step5 = group_by(data_step4,subject,activityDesc)
 
-
-
+result = data_step4%>%
+  group_by(subject,activityDesc)%>%
+  summarise_each(funs(mean))
+write.table(result,"result.txt",row.names=FALSE)
